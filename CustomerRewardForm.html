@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Data Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+		input[type="password"]{
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 20px 20px;
+            background-color: #3498db;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #258cd1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Customer Data Submission</h2>
+        <form id="customerForm">
+            <label for="email">Enter your email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+			
+			<label for="pwd">Password:</label>
+            <input type="password" id="pwd" name="pwd" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+			title="Must contain at least one number and one uppercase and lowercase letter, 
+			and at least 8 or more characters" required>
+
+            <label for="customerId">Customer Id:</label>
+            <input type="number" id="customerId" name="customerId" required><br><br>
+
+            <label for="purchaseAmount">Purchase Amount:</label>
+            <input type="number" id="purchaseAmount" name="purchaseAmount" required><br><br>
+
+            <div class="error" id="errorContainer"></div><br>
+
+            <input type="submit" value="Submit" onclick="onclick="submitForm()"">
+        </form>
+    </div>
+
+    <script>
+        function submitForm() {
+            const agentEmail = document.getElementById('agentEmail').value;
+            const customerId = document.getElementById('customerId').value;
+            const purchaseNumber = document.getElementById('purchaseNumber').value;
+			const form = document.getElementById("customerForm");
+			const errorContainer = document.getElementById("errorContainer");
+            errorContainer.innerHTML = "";
+
+            if (!validateEmail(agentEmail)) {
+                alert('Invalid email address');
+                return;
+            }
+
+            if (!validateNumber(customerId) || !validateNumber(purchaseNumber)) {
+                alert('Customer ID and Customer Purchases Number must be numbers');
+                return;
+            }
+
+            const data = {
+                agentEmail,
+                customerId: parseInt(customerId),
+                purchaseNumber: parseInt(purchaseNumber)
+            };
+
+            fetch('http://localhost:5000/dataadmission', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = 'http://localhost:5000/izvjestaj';
+                } else {
+                    alert('Error while sending data.');
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validateNumber(input) {
+            return !isNaN(input) && isFinite(input);
+        }
+		
+    </script>
+</body>
