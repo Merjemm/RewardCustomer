@@ -64,11 +64,6 @@
             <label for="email">Enter your email:</label>
             <input type="email" id="email" name="email" required><br><br>
 			
-			<label for="pwd">Password:</label>
-            <input type="password" id="pwd" name="pwd" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-			title="Must contain at least one number and one uppercase and lowercase letter, 
-			and at least 8 or more characters" required>
-
             <label for="customerId">Customer Id:</label>
             <input type="number" id="customerId" name="customerId" required><br><br>
 
@@ -77,17 +72,17 @@
 
             <div class="error" id="errorContainer"></div><br>
 
-            <input type="submit" value="Submit" onclick="onclick="submitForm()"">
+            <input type="submit" value="Submit" onclick="submitForm()">
         </form>
     </div>
 
     <script>
         function submitForm() {
-            const agentEmail = document.getElementById('agentEmail').value;
+            const agentEmail = document.getElementById('email').value;
             const customerId = document.getElementById('customerId').value;
-            const purchaseNumber = document.getElementById('purchaseNumber').value;
-			const form = document.getElementById("customerForm");
-			const errorContainer = document.getElementById("errorContainer");
+            const purchaseAmount = document.getElementById('purchaseAmount').value;
+            const form = document.getElementById("customerForm");
+            const errorContainer = document.getElementById("errorContainer");
             errorContainer.innerHTML = "";
 
             if (!validateEmail(agentEmail)) {
@@ -95,18 +90,18 @@
                 return;
             }
 
-            if (!validateNumber(customerId) || !validateNumber(purchaseNumber)) {
-                alert('Customer ID and Customer Purchases Number must be numbers');
+            if (!validateNumber(customerId) || !validateNumber(purchaseAmount)) {
+                alert('Customer ID and Purchase Amount must be numbers');
                 return;
             }
 
             const data = {
                 agentEmail,
                 customerId: parseInt(customerId),
-                purchaseNumber: parseInt(purchaseNumber)
+                purchaseAmount: parseInt(purchaseAmount)
             };
 
-            fetch('http://localhost:5000/dataadmission', {
+            fetch('/dataadmission', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -115,7 +110,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = 'http://localhost:5000/izvjestaj';
+                    window.location.href = '/izvjestaj';
                 } else {
                     alert('Error while sending data.');
                 }
@@ -133,6 +128,6 @@
         function validateNumber(input) {
             return !isNaN(input) && isFinite(input);
         }
-		
     </script>
 </body>
+</html>
